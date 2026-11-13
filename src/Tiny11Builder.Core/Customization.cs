@@ -191,7 +191,7 @@ public static class PostInstall
             PathSafety.RejectReparsePoints(programFiles);
             var cleaner = Path.Combine(programFiles, JunkCleanerFolder);
             Directory.CreateDirectory(cleaner);
-            File.WriteAllText(Path.Combine(cleaner, "JunkCleaner.bat"), ReadJunkCleaner(), Encoding.ASCII);
+            File.WriteAllText(Path.Combine(cleaner, "JunkCleaner.bat"), ReadJunkCleaner().ReplaceLineEndings("\r\n"), Encoding.ASCII);
         }
         var config = new { apps, winutilShortcut = recipe.WinUtilShortcut, junkCleaner = recipe.IncludeJunkCleaner };
         File.WriteAllText(Path.Combine(dir, "postinstall.json"), JsonSerializer.Serialize(config, JsonDefaults.Options), new UTF8Encoding(false));

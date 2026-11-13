@@ -12,3 +12,4 @@
 tiny11maker.ps1 -text
 tiny11Coremaker.ps1 -text
 autounattend.xml -text
+*.bat text eol=crlf
