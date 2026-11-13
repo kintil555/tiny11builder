@@ -86,6 +86,13 @@ public sealed record BuildRecipe
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool ReuseSourceInstallImage { get; init; }
     public bool ShrinkBootImage { get; init; }
+    // Offline drivers (folder, .inf, .7z/.zip or vendor installer .exe with a 7z payload), added with DISM /Add-Driver.
+    public string[] DriverPaths { get; init; } = [];
+    // First-boot software: Brave (bundled installer if BraveInstallerPath is set, else winget/direct download), extra winget ids, WinUtil shortcut.
+    public bool InstallBrave { get; init; }
+    public string BraveInstallerPath { get; init; } = "";
+    public string[] PostInstallApps { get; init; } = [];
+    public bool WinUtilShortcut { get; init; }
 
     public void ValidateOptions()
     {
@@ -112,6 +119,10 @@ public sealed record BuildRecipe
             throw new InvalidDataException("Custom ISO size limits must be between 64 MB and 4 GB (decimal bytes).");
         if (ShrinkBootImage && Mode is not (null or BuildMode.Custom))
             throw new InvalidDataException("Shrinking boot.wim is a Custom option.");
+        if (DriverPaths is null || PostInstallApps is null || DriverPaths.Length > 50 || PostInstallApps.Length > 100)
+            throw new InvalidDataException("Invalid driver or post-install list.");
+        foreach (var driver in DriverPaths) DriverSource.Validate(driver);
+        PostInstall.Validate(this);
         if (ImageIndex < 1 || SelectedOptions is null ||
             SelectedOptions.Length != SelectedOptions.Distinct(StringComparer.Ordinal).Count())
             throw new InvalidDataException("Invalid image index or duplicate cleanup options.");

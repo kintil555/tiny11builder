@@ -813,3 +813,15 @@ Thank you!
 
 **[Patreon](http://patreon.com/ntdev) | [PayPal](http://paypal.me/ntdev2) | [Ko-fi](http://ko-fi.com/ntdev)**
 Thanks for trying it and let me know how you like it!
+
+
+## Drivers, Brave and first-boot apps (fork additions)
+
+- **LAN / Wi-Fi drivers** (Build settings): add a driver folder, an `.inf`, a `.7z`/`.zip`, or a vendor installer `.exe`
+  that carries a 7z payload (for example the ASUS ROG Realtek LAN and Intel Wi-Fi installers). Drivers are added to the
+  install image with `DISM /Add-Driver /Recurse`. Recipe field: `DriverPaths`.
+- **Brave**: `InstallBrave`. Optionally bundle an installer with `BraveInstallerPath`; otherwise first boot installs it with
+  winget (`Brave.Brave`) or a signature-checked direct download once the network is up.
+- **WinUtil-style catalog**: `PostInstallApps` (winget IDs) and `WinUtilShortcut` (desktop shortcut that runs
+  `irm https://christitus.com/win | iex`). The engine is `Windows\Setup\Scripts\FirstBoot.ps1`, started from
+  `SetupComplete.cmd`; results are logged to `Windows\Setup\Scripts\firstboot.log`.

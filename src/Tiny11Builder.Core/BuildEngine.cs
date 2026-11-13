@@ -181,6 +181,7 @@ public sealed partial class BuildEngine
                 ("Custom servicing", "Apply individual servicing actions"), ("Remove apps", "Remove selected apps"),
                 ("Optional features", "Remove optional features and capabilities"),
                 ("Component cleanup", "Clean superseded component files"), (".NET 3.5", "Include .NET Framework 3.5"),
+                ("Drivers", "Add LAN / Wi-Fi drivers"), ("Post-install", "Add first-boot software"),
                 ("Windows settings", "Apply Windows settings"), ("Advanced payloads", "Remove selected payload files"),
                 ("Core pruning", "Trim Core component payloads"), ("Redundant data", "Remove redundant offline data"),
                 ("Commit", "Save image changes"),
@@ -195,6 +196,8 @@ public sealed partial class BuildEngine
                 "Component cleanup" => recipe.SelectedOptions.Contains("cleanup") || recipe.Flavor == BuildFlavor.Core,
                 "Core pruning" => recipe.Flavor == BuildFlavor.Core,
                 "Redundant data" => recipe.RemoveRedundantData,
+                "Drivers" => recipe.DriverPaths.Length > 0,
+                "Post-install" => PostInstall.Enabled(recipe),
                 "Setup image" => SetupInstaller.RequiresBootEdit(recipe),
                 _ => true
             })) tracking.Plan("stage:" + name, name, title);
@@ -406,6 +409,24 @@ public sealed partial class BuildEngine
                 if (!Directory.Exists(sxs)) throw new DirectoryNotFoundException("The source has no sources\\sxs payload for .NET 3.5.");
                 await dism.RunAsync(token, $"/Image:{mount}", "/Enable-Feature", "/FeatureName:NetFx3", "/All",
                     "/LimitAccess", $"/Source:{sxs}", "/NoRestart").ConfigureAwait(false);
+            }
+            if (recipe.DriverPaths.Length > 0)
+            {
+                Stage("Drivers", "Adding drivers to the offline image.");
+                await tracking.RunAsync("drivers:add", "Drivers", "Add LAN / Wi-Fi drivers", async () =>
+                {
+                    var folders = DriverSource.Prepare(recipe.DriverPaths, Path.Combine(job.Directory, "drivers"), Log, token);
+                    await DriverInjector.AddAsync(dism, mount, folders, token, Log).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            }
+            if (PostInstall.Enabled(recipe))
+            {
+                Stage("Post-install", "Writing the first-boot software engine.");
+                await tracking.RunAsync("postinstall:apply", "Post-install", "Add first-boot software", () =>
+                {
+                    PostInstall.Apply(mount, recipe, Log);
+                    return Task.CompletedTask;
+                }).ConfigureAwait(false);
             }
             Stage("Windows settings", "Applying selected registry settings to the offline image.");
             await tracking.RunAsync("registry:settings", "Windows settings", "Apply and verify offline Windows settings",

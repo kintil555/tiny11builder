@@ -468,6 +468,36 @@
                                 </Grid>
                             </Border>
                             <Border Style="{StaticResource Card}">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="LAN / Wi-Fi drivers" FontSize="18" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Inject drivers into the Windows image so the network works right after setup. Add a driver folder, an .inf, or a vendor installer (.exe/.7z/.zip with embedded driver files)." Style="{StaticResource Secondary}"/>
+                                    <ListView x:Name="DriverList" SelectionMode="Single" MaxHeight="160" SelectionChanged="OnDriverSelectionChanged" AutomationProperties.Name="Driver sources"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Button Content="Add driver file…" Click="OnAddDriverFile"/>
+                                        <Button Content="Add driver folder…" Click="OnAddDriverFolder"/>
+                                        <Button x:Name="RemoveDriverButton" Content="Remove" Click="OnRemoveDriver" IsEnabled="False"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}">
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6"><TextBlock Text="Brave browser" FontSize="18" FontWeight="SemiBold"/><TextBlock Text="Installed automatically on first boot (bundled installer if provided, otherwise winget / signed direct download once the network is up)." Style="{StaticResource Secondary}"/></StackPanel>
+                                        <ToggleSwitch x:Name="BraveCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="Brave browser"/>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Button Content="Bundle Brave installer…" Click="OnPickBraveInstaller"/>
+                                        <TextBlock x:Name="BraveInstallerText" Text="No bundled installer (online install)" Style="{StaticResource Hint}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6"><TextBlock Text="WinUtil shortcut" FontSize="18" FontWeight="SemiBold"/><TextBlock Text="Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks." Style="{StaticResource Secondary}"/></StackPanel>
+                                        <ToggleSwitch x:Name="WinUtilCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="WinUtil shortcut"/>
+                                    </Grid>
+                                    <TextBlock Text="Extra apps (winget IDs, one per line, e.g. 7zip.7zip)" Style="{StaticResource Secondary}"/>
+                                    <TextBox x:Name="ExtraAppsBox" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="80" MaxHeight="160" AutomationProperties.Name="Extra winget app IDs"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}">
                                 <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                     <FontIcon Glyph="&#xE8B7;" FontSize="36" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
                                     <StackPanel Grid.Column="1" Spacing="6"><TextBlock Text="Keep working files" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.KeepWorkingFiles"/><TextBlock Text="Retain the modified installation media after the ISO is saved. Uses more disk space." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.RetainTheModifiedInstallationMediaAfterTheISOIs"/></StackPanel>
