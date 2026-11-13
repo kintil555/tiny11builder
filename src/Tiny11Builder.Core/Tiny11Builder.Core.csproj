@@ -4,6 +4,9 @@
     <NoWarn>$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Assets\JunkCleaner.bat" LogicalName="JunkCleaner.bat" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.48.0" />
   </ItemGroup>
 </Project>

@@ -493,6 +493,10 @@
                                         <StackPanel Spacing="6"><TextBlock Text="WinUtil shortcut" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.WinUtilTitle"/><TextBlock Text="Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.WinUtilHelp"/></StackPanel>
                                         <ToggleSwitch x:Name="WinUtilCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="WinUtil shortcut" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.WinUtilTitle"/>
                                     </Grid>
+                                    <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6"><TextBlock Text="Junk Cleaner" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.JunkCleanerTitle"/><TextBlock Text="Adds JunkCleaner.bat to Program Files and an administrator shortcut on the desktop." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.JunkCleanerHelp"/></StackPanel>
+                                        <ToggleSwitch x:Name="JunkCleanerCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="Junk Cleaner" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.JunkCleanerTitle"/>
+                                    </Grid>
                                     <TextBlock Text="Extra apps (winget IDs, one per line, e.g. 7zip.7zip)" Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.ExtraAppsHelp"/>
                                     <TextBox x:Name="ExtraAppsBox" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="80" MaxHeight="160" AutomationProperties.Name="Extra winget app IDs" local:Translation.Properties="AutomationProperties.Name=Text.ExtraAppsBox"/>
                                 </StackPanel>

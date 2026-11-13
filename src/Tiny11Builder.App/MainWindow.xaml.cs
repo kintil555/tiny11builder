@@ -414,7 +414,7 @@ public sealed partial class MainWindow : Window
         IsoSizeLimitBytes = SelectedMode == BuildMode.Custom ? recipeIsoSizeLimit : null,
         ShrinkBootImage = SelectedMode == BuildMode.Custom && ShrinkBootCheck.IsChecked == true,
         DriverPaths = drivers.ToArray(), InstallBrave = BraveCheck.IsOn, BraveInstallerPath = braveInstaller,
-        WinUtilShortcut = WinUtilCheck.IsOn,
+        WinUtilShortcut = WinUtilCheck.IsOn, IncludeJunkCleaner = JunkCleanerCheck.IsOn,
         PostInstallApps = ExtraAppsBox.Text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Distinct(StringComparer.OrdinalIgnoreCase).ToArray()
     };
@@ -1266,7 +1266,7 @@ public sealed partial class MainWindow : Window
         Row("Review.NetFx", YesNo(recipe.EnableNetFx3));
         Row("Review.LocalAccount", UiText.Get(recipe.PreferLocalAccount ? "Common.Preferred" : "Common.Default"));
         text.AppendLine($"DRIVERS  {recipe.DriverPaths.Length} source(s)    BRAVE  {(recipe.InstallBrave ? "Yes" : "No")}    " +
-            $"WINUTIL  {(recipe.WinUtilShortcut ? "Yes" : "No")}    EXTRA APPS  {recipe.PostInstallApps.Length}");
+            $"WINUTIL  {(recipe.WinUtilShortcut ? "Yes" : "No")}    JUNK CLEANER  {(recipe.IncludeJunkCleaner ? "Yes" : "No")}    EXTRA APPS  {recipe.PostInstallApps.Length}");
         if (SetupLabels.Legacy(recipe) is { } legacy) text.AppendLine(legacy);
         text.AppendLine();
         text.AppendLine(UpdatePackagesSummary(recipe));
@@ -1796,6 +1796,7 @@ public sealed partial class MainWindow : Window
         braveInstaller = recipe.BraveInstallerPath;
         BraveInstallerText.Text = braveInstaller.Length > 0 ? braveInstaller : UiText.Get("Text.NoBundledBraveInstaller");
         WinUtilCheck.IsOn = recipe.WinUtilShortcut;
+        JunkCleanerCheck.IsOn = recipe.IncludeJunkCleaner;
         ExtraAppsBox.Text = string.Join("\r\n", recipe.PostInstallApps);
         KeepFilesCheck.IsOn = recipe.KeepWorkingFiles;
         TurboCheck.IsOn = recipe.TurboMode;

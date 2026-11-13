@@ -93,6 +93,8 @@ public sealed record BuildRecipe
     public string BraveInstallerPath { get; init; } = "";
     public string[] PostInstallApps { get; init; } = [];
     public bool WinUtilShortcut { get; init; }
+    // Copies JunkCleaner.bat to Program Files\JunkCleaner and adds an administrator desktop shortcut on first boot.
+    public bool IncludeJunkCleaner { get; init; }
 
     public void ValidateOptions()
     {

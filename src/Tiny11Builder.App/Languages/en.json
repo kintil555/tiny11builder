@@ -703,6 +703,8 @@
     "Text.WinUtilTitle": "WinUtil shortcut",
     "Text.WinUtilHelp": "Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks.",
     "Text.ExtraAppsHelp": "Extra apps (winget IDs, one per line, e.g. 7zip.7zip)",
-    "Text.ExtraAppsBox": "Extra winget app IDs"
+    "Text.ExtraAppsBox": "Extra winget app IDs",
+    "Text.JunkCleanerTitle": "Junk Cleaner",
+    "Text.JunkCleanerHelp": "Adds JunkCleaner.bat to Program Files and an administrator shortcut on the desktop."
   }
 }
