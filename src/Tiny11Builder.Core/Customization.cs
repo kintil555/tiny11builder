@@ -46,34 +46,41 @@ public static class DriverSource
 
     private static void Extract(string file, string destination, CancellationToken token)
     {
-        using var stream = OpenArchiveStream(file);
-        using var archive = ArchiveFactory.Open(stream);
-        var root = Path.GetFullPath(destination) + Path.DirectorySeparatorChar;
-        foreach (var entry in archive.Entries.Where(e => !e.IsDirectory && e.Key is not null))
+        var archivePath = file;
+        string? carved = null;
+        try
         {
-            token.ThrowIfCancellationRequested();
-            var target = Path.GetFullPath(Path.Combine(destination, entry.Key!.Replace('/', Path.DirectorySeparatorChar)));
-            if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Archive entry escapes the extraction folder.");
-            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
-            using var input = entry.OpenEntryStream();
-            using var output = File.Create(target);
-            input.CopyTo(output);
+            // Vendor .exe installers append a plain 7z archive to the stub: copy only that tail to a temp file.
+            if (Path.GetExtension(file).Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                var offset = FindSignature(file) ?? throw new InvalidDataException(
+                    $"{Path.GetFileName(file)} has no embedded 7z payload. Extract it first and add the folder instead.");
+                carved = destination + ".payload.7z";
+                using (var source = File.OpenRead(file))
+                using (var target = File.Create(carved))
+                {
+                    source.Position = offset;
+                    source.CopyTo(target);
+                }
+                archivePath = carved;
+            }
+            using var archive = ArchiveFactory.OpenArchive(archivePath);
+            var root = Path.GetFullPath(destination) + Path.DirectorySeparatorChar;
+            foreach (var entry in archive.Entries.Where(e => !e.IsDirectory && e.Key is not null))
+            {
+                token.ThrowIfCancellationRequested();
+                var target = Path.GetFullPath(Path.Combine(destination, entry.Key!.Replace('/', Path.DirectorySeparatorChar)));
+                if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Archive entry escapes the extraction folder.");
+                Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+                using var input = entry.OpenEntryStream();
+                using var output = File.Create(target);
+                input.CopyTo(output);
+            }
         }
-    }
-
-    // Vendor .exe installers append a plain 7z archive to the stub: find the signature and expose only that tail.
-    private static Stream OpenArchiveStream(string file)
-    {
-        if (!Path.GetExtension(file).Equals(".exe", StringComparison.OrdinalIgnoreCase)) return File.OpenRead(file);
-        var offset = FindSignature(file) ?? throw new InvalidDataException(
-            $"{Path.GetFileName(file)} has no embedded 7z payload. Extract it first and add the folder instead.");
-        var data = File.OpenRead(file);
-        data.Position = offset;
-        var copy = new MemoryStream();   // SharpCompress needs a seekable stream starting at the archive
-        data.CopyTo(copy);
-        data.Dispose();
-        copy.Position = 0;
-        return copy;
+        finally
+        {
+            if (carved is not null) File.Delete(carved);
+        }
     }
 
     internal static long? FindSignature(string file)
