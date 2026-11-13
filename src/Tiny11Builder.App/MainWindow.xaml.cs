@@ -70,6 +70,7 @@ public sealed partial class MainWindow : Window
     private readonly UpdatePackageSelection updatePackages = new();
     private readonly System.Collections.ObjectModel.ObservableCollection<string> drivers = [];
     private string braveInstaller = "";
+    private string gHelperPath = "";
     private readonly LanguageCatalogs languageCatalogs;
     private string languagePreference = "system";
     private bool changingLanguage;
@@ -415,6 +416,7 @@ public sealed partial class MainWindow : Window
         ShrinkBootImage = SelectedMode == BuildMode.Custom && ShrinkBootCheck.IsChecked == true,
         DriverPaths = drivers.ToArray(), InstallBrave = BraveCheck.IsOn, BraveInstallerPath = braveInstaller,
         WinUtilShortcut = WinUtilCheck.IsOn, IncludeJunkCleaner = JunkCleanerCheck.IsOn,
+        InstallGHelper = GHelperCheck.IsOn, GHelperPath = gHelperPath,
         PostInstallApps = ExtraAppsBox.Text.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Distinct(StringComparer.OrdinalIgnoreCase).ToArray()
     };
@@ -945,6 +947,19 @@ public sealed partial class MainWindow : Window
     private void OnDriverSelectionChanged(object sender, SelectionChangedEventArgs args) =>
         RemoveDriverButton.IsEnabled = !busy && DriverList.SelectedIndex >= 0;
 
+    private async void OnPickGHelper(object sender, RoutedEventArgs args)
+    {
+        if (busy || modalOpen) return;
+        await RunOperation(OperationKind.Choose, async _ =>
+        {
+            var path = await PickFile(".exe");
+            if (path is null) return;
+            gHelperPath = PathSafety.Full(path);
+            GHelperText.Text = gHelperPath;
+            GHelperCheck.IsOn = true;
+        });
+    }
+
     private async void OnPickBraveInstaller(object sender, RoutedEventArgs args)
     {
         if (busy || modalOpen) return;
@@ -1266,7 +1281,7 @@ public sealed partial class MainWindow : Window
         Row("Review.NetFx", YesNo(recipe.EnableNetFx3));
         Row("Review.LocalAccount", UiText.Get(recipe.PreferLocalAccount ? "Common.Preferred" : "Common.Default"));
         text.AppendLine($"DRIVERS  {recipe.DriverPaths.Length} source(s)    BRAVE  {(recipe.InstallBrave ? "Yes" : "No")}    " +
-            $"WINUTIL  {(recipe.WinUtilShortcut ? "Yes" : "No")}    JUNK CLEANER  {(recipe.IncludeJunkCleaner ? "Yes" : "No")}    EXTRA APPS  {recipe.PostInstallApps.Length}");
+            $"WINUTIL  {(recipe.WinUtilShortcut ? "Yes" : "No")}    JUNK CLEANER  {(recipe.IncludeJunkCleaner ? "Yes" : "No")}    G-HELPER  {(recipe.InstallGHelper ? "Yes" : "No")}    EXTRA APPS  {recipe.PostInstallApps.Length}");
         if (SetupLabels.Legacy(recipe) is { } legacy) text.AppendLine(legacy);
         text.AppendLine();
         text.AppendLine(UpdatePackagesSummary(recipe));
@@ -1797,6 +1812,9 @@ public sealed partial class MainWindow : Window
         BraveInstallerText.Text = braveInstaller.Length > 0 ? braveInstaller : UiText.Get("Text.NoBundledBraveInstaller");
         WinUtilCheck.IsOn = recipe.WinUtilShortcut;
         JunkCleanerCheck.IsOn = recipe.IncludeJunkCleaner;
+        GHelperCheck.IsOn = recipe.InstallGHelper;
+        gHelperPath = recipe.GHelperPath;
+        GHelperText.Text = gHelperPath.Length > 0 ? gHelperPath : UiText.Get("Text.NoGHelperSelected");
         ExtraAppsBox.Text = string.Join("\r\n", recipe.PostInstallApps);
         KeepFilesCheck.IsOn = recipe.KeepWorkingFiles;
         TurboCheck.IsOn = recipe.TurboMode;

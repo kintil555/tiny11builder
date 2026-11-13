@@ -140,11 +140,12 @@ public static class PostInstall
 {
     public const string BraveWingetId = "Brave.Brave";
     public const string BraveInstallerName = "BraveSetup.exe";
+    public const string DotNetRuntimeId = "Microsoft.DotNet.DesktopRuntime.8";
     public const string JunkCleanerFolder = "JunkCleaner";
 
     public sealed record AppEntry(string Name, string Winget, string? Installer = null, string? Args = null);
 
-    public static bool Enabled(BuildRecipe r) => r.InstallBrave || r.WinUtilShortcut || r.IncludeJunkCleaner || r.PostInstallApps.Length > 0;
+    public static bool Enabled(BuildRecipe r) => r.InstallBrave || r.WinUtilShortcut || r.IncludeJunkCleaner || r.InstallGHelper || r.PostInstallApps.Length > 0;
 
     public static void Validate(BuildRecipe r)
     {
@@ -153,6 +154,8 @@ public static class PostInstall
                 throw new InvalidDataException($"Invalid winget package id: {id}");
         if (r.PostInstallApps.Length != r.PostInstallApps.Distinct(StringComparer.OrdinalIgnoreCase).Count())
             throw new InvalidDataException("Duplicate winget package ids.");
+        if (r.InstallGHelper && (string.IsNullOrWhiteSpace(r.GHelperPath) || !File.Exists(PathSafety.Full(r.GHelperPath))))
+            throw new InvalidDataException("G-Helper requires an existing GHelper.exe.");
         if (!string.IsNullOrWhiteSpace(r.BraveInstallerPath) && (!r.InstallBrave || !File.Exists(PathSafety.Full(r.BraveInstallerPath))))
             throw new InvalidDataException("The Brave installer path requires Brave to be enabled and the file to exist.");
     }
@@ -184,7 +187,17 @@ public static class PostInstall
             }
             apps.Add(new("Brave", BraveWingetId, bundled, "/silent /install"));
         }
+        if (recipe.InstallGHelper && !recipe.PostInstallApps.Contains(DotNetRuntimeId, StringComparer.OrdinalIgnoreCase))
+            apps.Add(new(".NET 8 Desktop Runtime", DotNetRuntimeId));
         apps.AddRange(recipe.PostInstallApps.Select(id => new AppEntry(id, id)));
+        if (recipe.InstallGHelper)
+        {
+            var programFiles = Path.Combine(mount, "Program Files");
+            PathSafety.RejectReparsePoints(programFiles);
+            var folder = Path.Combine(programFiles, "GHelper");
+            Directory.CreateDirectory(folder);
+            File.Copy(PathSafety.Full(recipe.GHelperPath), Path.Combine(folder, "GHelper.exe"), overwrite: true);
+        }
         if (recipe.IncludeJunkCleaner)
         {
             var programFiles = Path.Combine(mount, "Program Files");
@@ -193,7 +206,7 @@ public static class PostInstall
             Directory.CreateDirectory(cleaner);
             File.WriteAllText(Path.Combine(cleaner, "JunkCleaner.bat"), ReadJunkCleaner().ReplaceLineEndings("\r\n"), Encoding.ASCII);
         }
-        var config = new { apps, winutilShortcut = recipe.WinUtilShortcut, junkCleaner = recipe.IncludeJunkCleaner };
+        var config = new { apps, winutilShortcut = recipe.WinUtilShortcut, junkCleaner = recipe.IncludeJunkCleaner, gHelper = recipe.InstallGHelper };
         File.WriteAllText(Path.Combine(dir, "postinstall.json"), JsonSerializer.Serialize(config, JsonDefaults.Options), new UTF8Encoding(false));
         File.WriteAllText(Path.Combine(dir, "FirstBoot.ps1"), FirstBootScript.ReplaceLineEndings("\r\n"), new UTF8Encoding(true));
         // SetupComplete.cmd runs once as SYSTEM after setup; keep any existing one by chaining.
@@ -202,7 +215,7 @@ public static class PostInstall
         var line = "start \"\" /min powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"%~dp0FirstBoot.ps1\"\r\n";
         if (!existing.Contains("FirstBoot.ps1"))
             File.WriteAllText(cmd, (existing.Length > 0 && !existing.EndsWith('\n') ? existing + "\r\n" : existing) + line, Encoding.ASCII);
-        log($"Post-install engine written: {apps.Count} app(s){(recipe.WinUtilShortcut ? ", WinUtil shortcut" : "")}{(recipe.IncludeJunkCleaner ? ", Junk Cleaner" : "")}.");
+        log($"Post-install engine written: {apps.Count} app(s){(recipe.WinUtilShortcut ? ", WinUtil shortcut" : "")}{(recipe.IncludeJunkCleaner ? ", Junk Cleaner" : "")}{(recipe.InstallGHelper ? ", G-Helper" : "")}.");
     }
 
     // Runs detached from SetupComplete so Windows setup is never blocked. It registers a SYSTEM scheduled task
@@ -260,6 +273,22 @@ public static class PostInstall
                     Log 'Junk Cleaner shortcut created'
                 } else { Log 'JunkCleaner.bat missing' }
                 $done += 'junkcleaner'; Save-State
+            }
+            if ($cfg.gHelper -and $done -notcontains 'ghelper') {
+                $exe = Join-Path $env:ProgramFiles 'GHelper\GHelper.exe'
+                if (Test-Path $exe) {
+                    New-Shortcut (Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\G-Helper.lnk') $exe '' 'G-Helper'
+                    try {
+                        # Same autostart task G-Helper creates itself: elevated at logon for administrators.
+                        $ga = New-ScheduledTaskAction -Execute $exe -WorkingDirectory (Split-Path $exe)
+                        $gt = New-ScheduledTaskTrigger -AtLogOn
+                        $gp = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-544' -RunLevel Highest
+                        $gs = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit ([TimeSpan]::Zero)
+                        Register-ScheduledTask -TaskName 'GHelper' -Action $ga -Trigger $gt -Principal $gp -Settings $gs -Force | Out-Null
+                        Log 'G-Helper shortcut and autostart task created'
+                    } catch { Log "G-Helper autostart failed: $_" }
+                } else { Log 'GHelper.exe missing' }
+                $done += 'ghelper'; Save-State
             }
             if ($cfg.winutilShortcut -and $done -notcontains 'winutil') {
                 New-Shortcut (Join-Path $desktop 'WinUtil.lnk') 'powershell.exe' '-NoProfile -ExecutionPolicy Bypass -Command "irm https://christitus.com/win | iex"' 'Chris Titus WinUtil (downloads and runs the latest version)'

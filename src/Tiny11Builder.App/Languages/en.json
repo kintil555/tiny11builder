@@ -704,6 +704,10 @@
     "Text.WinUtilHelp": "Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks.",
     "Text.ExtraAppsHelp": "Extra apps (winget IDs, one per line, e.g. 7zip.7zip)",
     "Text.ExtraAppsBox": "Extra winget app IDs",
+    "Text.GHelperTitle": "G-Helper",
+    "Text.GHelperHelp": "Copies your GHelper.exe to Program Files with autostart. The .NET 8 Desktop Runtime it needs is installed on first boot (online).",
+    "Text.PickGHelper": "Select GHelper.exe…",
+    "Text.NoGHelperSelected": "No GHelper.exe selected",
     "Text.JunkCleanerTitle": "Junk Cleaner",
     "Text.JunkCleanerHelp": "Adds JunkCleaner.bat to Program Files and an administrator shortcut on the desktop."
   }

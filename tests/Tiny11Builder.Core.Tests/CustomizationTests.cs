@@ -38,6 +38,17 @@ public sealed class CustomizationTests : IDisposable
     }
 
     [Fact]
+    public void GHelper_requires_an_existing_exe_and_enables_post_install()
+    {
+        Assert.Throws<InvalidDataException>(() => PostInstall.Validate(new BuildRecipe { InstallGHelper = true, GHelperPath = Path.Combine(root, "none.exe") }));
+        var exe = Path.Combine(root, "GHelper.exe");
+        File.WriteAllBytes(exe, [1]);
+        var recipe = new BuildRecipe { InstallGHelper = true, GHelperPath = exe };
+        PostInstall.Validate(recipe);
+        Assert.True(PostInstall.Enabled(recipe));
+    }
+
+    [Fact]
     public void Junk_cleaner_is_embedded_and_enables_post_install()
     {
         Assert.Contains("JUNK FILES CLEANER", PostInstall.ReadJunkCleaner());

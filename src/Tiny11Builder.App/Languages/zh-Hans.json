@@ -704,6 +704,10 @@
     "Text.WinUtilHelp": "运行 Chris Titus WinUtil (christitus.com/win) 的桌面快捷方式，用于安装应用和调整系统。",
     "Text.ExtraAppsHelp": "额外应用（winget ID，每行一个，例如 7zip.7zip）",
     "Text.ExtraAppsBox": "额外 winget 应用 ID",
+    "Text.GHelperTitle": "G-Helper",
+    "Text.GHelperHelp": "将你的 GHelper.exe 复制到 Program Files 并设为开机自启。所需的 .NET 8 桌面运行时会在首次启动时联网安装。",
+    "Text.PickGHelper": "选择 GHelper.exe…",
+    "Text.NoGHelperSelected": "未选择 GHelper.exe",
     "Text.JunkCleanerTitle": "垃圾清理工具",
     "Text.JunkCleanerHelp": "将 JunkCleaner.bat 添加到 Program Files，并在桌面创建管理员快捷方式。"
   }

@@ -494,6 +494,14 @@
                                         <ToggleSwitch x:Name="WinUtilCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="WinUtil shortcut" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.WinUtilTitle"/>
                                     </Grid>
                                     <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6"><TextBlock Text="G-Helper" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.GHelperTitle"/><TextBlock Text="Copies your GHelper.exe to Program Files with autostart. The .NET 8 Desktop Runtime it needs is installed on first boot (online)." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.GHelperHelp"/></StackPanel>
+                                        <ToggleSwitch x:Name="GHelperCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="G-Helper" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.GHelperTitle"/>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Button Content="Select GHelper.exe…" Click="OnPickGHelper" local:Translation.Properties="Content=Text.PickGHelper"/>
+                                        <TextBlock x:Name="GHelperText" Text="No GHelper.exe selected" Style="{StaticResource Hint}" VerticalAlignment="Center" local:Translation.Properties="Text=Text.NoGHelperSelected"/>
+                                    </StackPanel>
+                                    <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                                         <StackPanel Spacing="6"><TextBlock Text="Junk Cleaner" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.JunkCleanerTitle"/><TextBlock Text="Adds JunkCleaner.bat to Program Files and an administrator shortcut on the desktop." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.JunkCleanerHelp"/></StackPanel>
                                         <ToggleSwitch x:Name="JunkCleanerCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="Junk Cleaner" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.JunkCleanerTitle"/>
                                     </Grid>

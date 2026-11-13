@@ -95,6 +95,9 @@ public sealed record BuildRecipe
     public bool WinUtilShortcut { get; init; }
     // Copies JunkCleaner.bat to Program Files\JunkCleaner and adds an administrator desktop shortcut on first boot.
     public bool IncludeJunkCleaner { get; init; }
+    // G-Helper (user-supplied GHelper.exe) copied to Program Files\GHelper with autostart; needs the .NET 8 Desktop Runtime (installed on first boot).
+    public bool InstallGHelper { get; init; }
+    public string GHelperPath { get; init; } = "";
 
     public void ValidateOptions()
     {
