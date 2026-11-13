@@ -469,32 +469,32 @@
                             </Border>
                             <Border Style="{StaticResource Card}">
                                 <StackPanel Spacing="10">
-                                    <TextBlock Text="LAN / Wi-Fi drivers" FontSize="18" FontWeight="SemiBold"/>
-                                    <TextBlock Text="Inject drivers into the Windows image so the network works right after setup. Add a driver folder, an .inf, or a vendor installer (.exe/.7z/.zip with embedded driver files)." Style="{StaticResource Secondary}"/>
-                                    <ListView x:Name="DriverList" SelectionMode="Single" MaxHeight="160" SelectionChanged="OnDriverSelectionChanged" AutomationProperties.Name="Driver sources"/>
+                                    <TextBlock Text="LAN / Wi-Fi drivers" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.DriversTitle"/>
+                                    <TextBlock Text="Inject drivers into the Windows image so the network works right after setup. Add a driver folder, an .inf, or a vendor installer (.exe/.7z/.zip with embedded driver files)." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.DriversHelp"/>
+                                    <ListView x:Name="DriverList" SelectionMode="Single" MaxHeight="160" SelectionChanged="OnDriverSelectionChanged" AutomationProperties.Name="Driver sources" local:Translation.Properties="AutomationProperties.Name=Text.DriverSources"/>
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <Button Content="Add driver file…" Click="OnAddDriverFile"/>
-                                        <Button Content="Add driver folder…" Click="OnAddDriverFolder"/>
-                                        <Button x:Name="RemoveDriverButton" Content="Remove" Click="OnRemoveDriver" IsEnabled="False"/>
+                                        <Button Content="Add driver file…" Click="OnAddDriverFile" local:Translation.Properties="Content=Text.AddDriverFile"/>
+                                        <Button Content="Add driver folder…" Click="OnAddDriverFolder" local:Translation.Properties="Content=Text.AddDriverFolder"/>
+                                        <Button x:Name="RemoveDriverButton" Content="Remove" Click="OnRemoveDriver" IsEnabled="False" local:Translation.Properties="Content=Common.Remove"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Border>
                             <Border Style="{StaticResource Card}">
                                 <StackPanel Spacing="12">
                                     <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                        <StackPanel Spacing="6"><TextBlock Text="Brave browser" FontSize="18" FontWeight="SemiBold"/><TextBlock Text="Installed automatically on first boot (bundled installer if provided, otherwise winget / signed direct download once the network is up)." Style="{StaticResource Secondary}"/></StackPanel>
-                                        <ToggleSwitch x:Name="BraveCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="Brave browser"/>
+                                        <StackPanel Spacing="6"><TextBlock Text="Brave browser" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.BraveTitle"/><TextBlock Text="Installed automatically on first boot (bundled installer if provided, otherwise winget / signed direct download once the network is up)." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.BraveHelp"/></StackPanel>
+                                        <ToggleSwitch x:Name="BraveCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="Brave browser" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.BraveTitle"/>
                                     </Grid>
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <Button Content="Bundle Brave installer…" Click="OnPickBraveInstaller"/>
-                                        <TextBlock x:Name="BraveInstallerText" Text="No bundled installer (online install)" Style="{StaticResource Hint}" VerticalAlignment="Center"/>
+                                        <Button Content="Bundle Brave installer…" Click="OnPickBraveInstaller" local:Translation.Properties="Content=Text.BundleBraveInstaller"/>
+                                        <TextBlock x:Name="BraveInstallerText" Text="No bundled installer (online install)" Style="{StaticResource Hint}" VerticalAlignment="Center" local:Translation.Properties="Text=Text.NoBundledBraveInstaller"/>
                                     </StackPanel>
                                     <Grid ColumnSpacing="20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                        <StackPanel Spacing="6"><TextBlock Text="WinUtil shortcut" FontSize="18" FontWeight="SemiBold"/><TextBlock Text="Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks." Style="{StaticResource Secondary}"/></StackPanel>
-                                        <ToggleSwitch x:Name="WinUtilCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="WinUtil shortcut"/>
+                                        <StackPanel Spacing="6"><TextBlock Text="WinUtil shortcut" FontSize="18" FontWeight="SemiBold" local:Translation.Properties="Text=Text.WinUtilTitle"/><TextBlock Text="Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks." Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.WinUtilHelp"/></StackPanel>
+                                        <ToggleSwitch x:Name="WinUtilCheck" Grid.Column="1" OffContent="Off" OnContent="On" AutomationProperties.Name="WinUtil shortcut" local:Translation.Properties="OffContent=Common.Off;OnContent=Common.On;AutomationProperties.Name=Text.WinUtilTitle"/>
                                     </Grid>
-                                    <TextBlock Text="Extra apps (winget IDs, one per line, e.g. 7zip.7zip)" Style="{StaticResource Secondary}"/>
-                                    <TextBox x:Name="ExtraAppsBox" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="80" MaxHeight="160" AutomationProperties.Name="Extra winget app IDs"/>
+                                    <TextBlock Text="Extra apps (winget IDs, one per line, e.g. 7zip.7zip)" Style="{StaticResource Secondary}" local:Translation.Properties="Text=Text.ExtraAppsHelp"/>
+                                    <TextBox x:Name="ExtraAppsBox" AcceptsReturn="True" TextWrapping="NoWrap" MinHeight="80" MaxHeight="160" AutomationProperties.Name="Extra winget app IDs" local:Translation.Properties="AutomationProperties.Name=Text.ExtraAppsBox"/>
                                 </StackPanel>
                             </Border>
                             <Border Style="{StaticResource Card}">

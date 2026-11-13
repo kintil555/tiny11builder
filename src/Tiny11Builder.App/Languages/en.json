@@ -690,6 +690,19 @@
     "Text.Joined657": "Recover discards a job's working copy, and it does not do that for a job with saved progress. Resume continues the build from that progress instead.\n\nNothing has been changed.",
     "Text.Joined658": "Select only job.json from the interrupted tiny11 job. This discards that job's mounted working copy and removes its staged media. Its logs, recipe, report and your source ISO are kept. A job whose image was already committed has saved progress and is never discarded here; use Resume build for it. Active builds cannot be recovered.",
     "Image.ServerUnsupported": "Windows Server images are not supported.",
-    "Preset.EdgePolicyWithFileRemoval": "Suppress first-run, sidebar and recommendations. This preset also removes Edge and WebView2 files through its separate file-removal group."
+    "Preset.EdgePolicyWithFileRemoval": "Suppress first-run, sidebar and recommendations. This preset also removes Edge and WebView2 files through its separate file-removal group.",
+    "Text.DriversTitle": "LAN / Wi-Fi drivers",
+    "Text.DriversHelp": "Inject drivers into the Windows image so the network works right after setup. Add a driver folder, an .inf, or a vendor installer (.exe/.7z/.zip with embedded driver files).",
+    "Text.DriverSources": "Driver sources",
+    "Text.AddDriverFile": "Add driver file…",
+    "Text.AddDriverFolder": "Add driver folder…",
+    "Text.BraveTitle": "Brave browser",
+    "Text.BraveHelp": "Installed automatically on first boot (bundled installer if provided, otherwise winget / signed direct download once the network is up).",
+    "Text.BundleBraveInstaller": "Bundle Brave installer…",
+    "Text.NoBundledBraveInstaller": "No bundled installer (online install)",
+    "Text.WinUtilTitle": "WinUtil shortcut",
+    "Text.WinUtilHelp": "Desktop shortcut that runs Chris Titus WinUtil (christitus.com/win) for app installs and tweaks.",
+    "Text.ExtraAppsHelp": "Extra apps (winget IDs, one per line, e.g. 7zip.7zip)",
+    "Text.ExtraAppsBox": "Extra winget app IDs"
   }
 }

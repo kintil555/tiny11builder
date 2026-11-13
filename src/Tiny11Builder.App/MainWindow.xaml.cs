@@ -1794,7 +1794,7 @@ public sealed partial class MainWindow : Window
         foreach (var d in recipe.DriverPaths) drivers.Add(d);
         BraveCheck.IsOn = recipe.InstallBrave;
         braveInstaller = recipe.BraveInstallerPath;
-        BraveInstallerText.Text = braveInstaller.Length > 0 ? braveInstaller : "No bundled installer (online install)";
+        BraveInstallerText.Text = braveInstaller.Length > 0 ? braveInstaller : UiText.Get("Text.NoBundledBraveInstaller");
         WinUtilCheck.IsOn = recipe.WinUtilShortcut;
         ExtraAppsBox.Text = string.Join("\r\n", recipe.PostInstallApps);
         KeepFilesCheck.IsOn = recipe.KeepWorkingFiles;
