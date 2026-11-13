@@ -1,8 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using SharpCompress.Archives;
-using SharpCompress.Archives.SevenZip;
-using SharpCompress.Common;
 
 namespace Tiny11Builder.Core;
 
@@ -57,7 +55,9 @@ public static class DriverSource
             var target = Path.GetFullPath(Path.Combine(destination, entry.Key!.Replace('/', Path.DirectorySeparatorChar)));
             if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Archive entry escapes the extraction folder.");
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
-            entry.WriteToFile(target, new ExtractionOptions { Overwrite = true });
+            using var input = entry.OpenEntryStream();
+            using var output = File.Create(target);
+            input.CopyTo(output);
         }
     }
 
